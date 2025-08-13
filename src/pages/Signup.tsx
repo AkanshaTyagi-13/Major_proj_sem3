@@ -25,10 +25,29 @@ const Signup = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (formData.password !== formData.confirmPassword) {
+    // Form validation
+    if (!formData.name || !formData.email || !formData.password || !formData.confirmPassword) {
       toast({
-        title: "Password mismatch",
-        description: "Passwords do not match. Please try again.",
+        title: "Validation Error",
+        description: "Please fill in all required fields.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (formData.name.length < 2) {
+      toast({
+        title: "Invalid Name",
+        description: "Name must be at least 2 characters long.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!formData.email.includes('@')) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address.",
         variant: "destructive",
       });
       return;
@@ -36,8 +55,17 @@ const Signup = () => {
 
     if (formData.password.length < 6) {
       toast({
-        title: "Weak password",
+        title: "Weak Password",
         description: "Password must be at least 6 characters long.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      toast({
+        title: "Password Mismatch",
+        description: "Passwords do not match. Please try again.",
         variant: "destructive",
       });
       return;
@@ -50,13 +78,13 @@ const Signup = () => {
       if (success) {
         toast({
           title: "Account created!",
-          description: "Welcome to InternFind. You can now start applying for internships.",
+          description: "Welcome to InternFind! You can now explore internships.",
         });
         navigate('/');
       } else {
         toast({
           title: "Signup failed",
-          description: "An account with this email already exists.",
+          description: "User with this email already exists.",
           variant: "destructive",
         });
       }

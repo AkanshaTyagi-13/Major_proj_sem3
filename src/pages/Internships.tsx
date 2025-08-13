@@ -20,9 +20,9 @@ import {
 
 const Internships = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedLocation, setSelectedLocation] = useState('');
-  const [selectedStipend, setSelectedStipend] = useState('');
-  const [selectedType, setSelectedType] = useState('');
+  const [selectedLocation, setSelectedLocation] = useState('all');
+  const [selectedStipend, setSelectedStipend] = useState('all');
+  const [selectedType, setSelectedType] = useState('all');
   const [selectedInternship, setSelectedInternship] = useState<Internship | null>(null);
   const [filteredInternships, setFilteredInternships] = useState(mockInternships);
 
@@ -49,14 +49,14 @@ const Internships = () => {
     }
 
     // Filter by location
-    if (selectedLocation) {
+    if (selectedLocation && selectedLocation !== 'all') {
       filtered = filtered.filter(internship =>
         internship.location.toLowerCase().includes(selectedLocation.toLowerCase())
       );
     }
 
     // Filter by stipend
-    if (selectedStipend) {
+    if (selectedStipend && selectedStipend !== 'all') {
       const [min, max] = selectedStipend.split('-').map(s => parseInt(s) || 0);
       filtered = filtered.filter(internship => {
         if (max) {
@@ -68,7 +68,7 @@ const Internships = () => {
     }
 
     // Filter by type
-    if (selectedType) {
+    if (selectedType && selectedType !== 'all') {
       filtered = filtered.filter(internship => internship.type === selectedType);
     }
 
@@ -77,16 +77,16 @@ const Internships = () => {
 
   const clearFilters = () => {
     setSearchTerm('');
-    setSelectedLocation('');
-    setSelectedStipend('');
-    setSelectedType('');
+    setSelectedLocation('all');
+    setSelectedStipend('all');
+    setSelectedType('all');
   };
 
   const activeFilters = [
     searchTerm && { label: `Search: ${searchTerm}`, clear: () => setSearchTerm('') },
-    selectedLocation && { label: `Location: ${selectedLocation}`, clear: () => setSelectedLocation('') },
-    selectedStipend && { label: `Stipend: ${selectedStipend}`, clear: () => setSelectedStipend('') },
-    selectedType && { label: `Type: ${selectedType}`, clear: () => setSelectedType('') },
+    selectedLocation && selectedLocation !== 'all' && { label: `Location: ${selectedLocation}`, clear: () => setSelectedLocation('all') },
+    selectedStipend && selectedStipend !== 'all' && { label: `Stipend: ${selectedStipend}`, clear: () => setSelectedStipend('all') },
+    selectedType && selectedType !== 'all' && { label: `Type: ${selectedType}`, clear: () => setSelectedType('all') },
   ].filter(Boolean);
 
   return (
@@ -123,7 +123,7 @@ const Internships = () => {
                     <SelectValue placeholder="Location" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Locations</SelectItem>
+                    <SelectItem value="all">All Locations</SelectItem>
                     <SelectItem value="bangalore">Bangalore</SelectItem>
                     <SelectItem value="mumbai">Mumbai</SelectItem>
                     <SelectItem value="delhi">Delhi</SelectItem>
@@ -139,7 +139,7 @@ const Internships = () => {
                     <SelectValue placeholder="Stipend" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Any Stipend</SelectItem>
+                    <SelectItem value="all">Any Stipend</SelectItem>
                     <SelectItem value="0-15000">₹0 - ₹15k</SelectItem>
                     <SelectItem value="15000-25000">₹15k - ₹25k</SelectItem>
                     <SelectItem value="25000-35000">₹25k - ₹35k</SelectItem>
@@ -152,7 +152,7 @@ const Internships = () => {
                     <SelectValue placeholder="Type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Types</SelectItem>
+                    <SelectItem value="all">All Types</SelectItem>
                     <SelectItem value="Full-time">Full-time</SelectItem>
                     <SelectItem value="Part-time">Part-time</SelectItem>
                     <SelectItem value="Remote">Remote</SelectItem>
@@ -183,7 +183,7 @@ const Internships = () => {
                           <SelectValue placeholder="All Locations" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="">All Locations</SelectItem>
+                          <SelectItem value="all">All Locations</SelectItem>
                           <SelectItem value="bangalore">Bangalore</SelectItem>
                           <SelectItem value="mumbai">Mumbai</SelectItem>
                           <SelectItem value="delhi">Delhi</SelectItem>
@@ -201,7 +201,7 @@ const Internships = () => {
                           <SelectValue placeholder="Any Stipend" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="">Any Stipend</SelectItem>
+                          <SelectItem value="all">Any Stipend</SelectItem>
                           <SelectItem value="0-15000">₹0 - ₹15k</SelectItem>
                           <SelectItem value="15000-25000">₹15k - ₹25k</SelectItem>
                           <SelectItem value="25000-35000">₹25k - ₹35k</SelectItem>
@@ -217,7 +217,7 @@ const Internships = () => {
                           <SelectValue placeholder="All Types" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="">All Types</SelectItem>
+                          <SelectItem value="all">All Types</SelectItem>
                           <SelectItem value="Full-time">Full-time</SelectItem>
                           <SelectItem value="Part-time">Part-time</SelectItem>
                           <SelectItem value="Remote">Remote</SelectItem>

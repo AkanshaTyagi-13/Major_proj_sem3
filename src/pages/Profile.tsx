@@ -9,9 +9,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { User, Edit, Save, X, Plus } from 'lucide-react';
+import { Edit, Save, X, Plus, CheckCircle } from 'lucide-react';
 import {
   Form,
   FormControl,
@@ -37,6 +38,7 @@ const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [newSkill, setNewSkill] = useState('');
 
+
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
@@ -48,6 +50,25 @@ const Profile = () => {
     },
   });
 
+  // Calculate profile completion percentage
+  const calculateProfileCompletion = () => {
+    if (!user) return 0;
+    
+    const fields = [
+      user.name,
+      user.email,
+      user.education,
+      user.experience,
+      user.skills && user.skills.length > 0,
+      user.resume
+    ];
+    
+    const completedFields = fields.filter(field => field && field !== '').length;
+    return Math.round((completedFields / fields.length) * 100);
+  };
+
+  const profileCompletion = calculateProfileCompletion();
+
   const onSubmit = (values: ProfileFormValues) => {
     updateProfile(values);
     setIsEditing(false);
@@ -56,6 +77,8 @@ const Profile = () => {
       description: "Your profile has been successfully updated.",
     });
   };
+
+
 
   const addSkill = () => {
     if (newSkill.trim() && !user?.skills?.includes(newSkill.trim())) {
@@ -107,6 +130,36 @@ const Profile = () => {
           <p className="text-muted-foreground">Manage your personal information and preferences</p>
         </div>
 
+        {/* Profile Completion */}
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <CheckCircle className="h-5 w-5 text-primary" />
+              Profile Completion
+            </CardTitle>
+            <CardDescription>
+              Complete your profile to increase your chances of getting hired
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span>Progress</span>
+                <span>{profileCompletion}%</span>
+              </div>
+              <Progress value={profileCompletion} className="h-2" />
+              <p className="text-xs text-muted-foreground">
+                {profileCompletion === 100 
+                  ? "Your profile is complete!" 
+                  : "Add more information to improve your profile visibility"
+                }
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+
+
         <div className="grid gap-6 md:grid-cols-2">
           {/* Profile Overview */}
           <Card>
@@ -145,7 +198,7 @@ const Profile = () => {
                       placeholder="Add a skill..."
                       value={newSkill}
                       onChange={(e) => setNewSkill(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && addSkill()}
+                      onKeyDown={(e) => e.key === 'Enter' && addSkill()}
                       className="flex-1"
                     />
                     <Button onClick={addSkill} size="sm" disabled={!newSkill.trim()}>
